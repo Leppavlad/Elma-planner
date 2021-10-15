@@ -10,6 +10,38 @@
     <link rel="stylesheet" href="./css/style.scss" />
   </head>
   <body>
+    <div class="container">
+      <section class="planner">
+        <section class="calendar__wrapper">
+          <div class="calendar__controllers">
+            <div class="calendar__controllers__prev">&#8249;</div>
+            <div class="calendar__controllers__next">&#8250;</div>
+          </div>
+          <div class="calendar">
+            <div class="calendar__header" data-daysToShow="7"></div>
+            <div class="calendar__content" id="usersList" data-daysToShow="7">
+              <!-- Here is going to be rendered users -->
+            </div>
+          </div>
+        </section>
+        <aside class="backlog">
+          <div class="backlog__wrapper">
+            <div class="backlog__header">
+              <h2 class="backlog__title">Backlog</h2>
+              <input
+                type="search"
+                name="backlogSearch"
+                id="backlogSearch"
+                placeholder="Найти"
+              />
+            </div>
+            <div class="backglog__content"></div>
+          </div>
+          <div class="backlog__close">&times;</div>
+        </aside>
+      </section>
+    </div>
+
     <script src="./index.ts"></script>
   </body>
 </html>

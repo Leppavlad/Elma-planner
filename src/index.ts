@@ -1,12 +1,8 @@
-// import "./css/fromjs.sass";
+import { Calendar } from "./js/Calendar";
 
-// async function asyncAwaitSample() {
-//   const { tes } = await import("./tes");
-//   const result = await tes();
-//   console.log(result);
-// }
+const calendarElma = new Calendar({
+  usersDivId: "usersList",
+  backlogDivId: "backlogList",
+});
 
-// asyncAwaitSample();
-
-console.log("Typescript file");
-// const a:number = "4";
+calendarElma.init();
