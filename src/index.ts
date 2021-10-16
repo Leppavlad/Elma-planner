@@ -1,8 +1,11 @@
+import PerfectScrollbar from "perfect-scrollbar";
+
 import { Calendar } from "./js/Calendar";
 
-const calendarElma = new Calendar({
+new Calendar({
   usersDivId: "usersList",
   backlogDivId: "backlogList",
-});
+}).init();
 
-calendarElma.init();
+new PerfectScrollbar(document.querySelector(".calendar"));
+new PerfectScrollbar(document.querySelector(".backlog__list"));

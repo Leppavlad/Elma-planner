@@ -1,3 +1,5 @@
+@import "./modules/planner.scss";
+
 *,
 *::before,
 *::after {
@@ -8,5 +10,15 @@
 
 html {
   box-sizing: border-box;
-  // font-size: 62.5%;
+}
+
+// .container {
+//   width: 1200px;
+//   margin: 0 auto;
+// }
+
+body {
+  width: 100vw;
+  height: calc(100vh - 0px);
+  overflow: hidden;
 }

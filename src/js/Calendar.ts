@@ -26,6 +26,7 @@ export class Calendar {
     this.usersContainer = document.getElementById(usersDivId);
     this.backlogContainer = document.getElementById(backlogDivId);
     this.setDaysToShow(daysToShow || 7);
+    return this;
   }
 
   setCalendarDays() {
@@ -85,8 +86,8 @@ export class Calendar {
     this.tasks.forEach(({ data: { id, subject } }) => {
       const taskElement = `
         <li class="backlog__task" data-taskId"=${id}>
-          <h3 class="backlog__task__subject">${id}</h3>
-          <p class="backlog__task__description">${subject}</p>
+          <h3 class="backlog__task__subject">${subject}</h3>
+          <p class="backlog__task__description">${id}</p>
         </li>`;
       tasksStringContent += taskElement;
     });
@@ -97,7 +98,6 @@ export class Calendar {
     fetchData(
       "https://varankin_dev.elma365.ru/api/extensions/2a38760e-083a-4dd0-aebc-78b570bfd3c7/script/users"
     ).then((fetchedUsers: UserType[]) => {
-      // console.log(fetchedUsers);
       this.createDataArray(fetchedUsers, User, "users");
       this.renderUsers();
     });
