@@ -7,5 +7,5 @@ new Calendar({
   backlogDivId: "backlogList",
 }).init();
 
-new PerfectScrollbar(document.querySelector(".calendar"));
+new PerfectScrollbar(document.querySelector(".calendar__content"));
 new PerfectScrollbar(document.querySelector(".backlog__list"));
