@@ -1,0 +1,7 @@
+@mixin nonSelectable {
+  user-select: none;
+}
+
+@mixin selected {
+  opacity: 0.6;
+}

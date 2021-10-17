@@ -1,4 +1,6 @@
 @import "./modules/planner.scss";
+@import "./variables";
+@import "./mixins";
 
 *,
 *::before,
@@ -11,15 +13,16 @@
 html {
   font-family: sans-serif;
   box-sizing: border-box;
+  font-size: 10px;
 }
-
-// .container {
-//   width: 1200px;
-//   margin: 0 auto;
-// }
 
 body {
   width: 100vw;
   height: calc(100vh - 0px);
   overflow: hidden;
+  font-size: 1.8rem;
+
+  @media screen and (max-width: $mobile_max-width) {
+    font-size: 1.5rem;
+  }
 }

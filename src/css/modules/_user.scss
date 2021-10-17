@@ -1,0 +1,47 @@
+@import "../variables";
+
+.user {
+  display: flex;
+
+  &__data {
+    flex: 0 0 200px;
+
+    display: grid;
+    place-content: center;
+    padding: 10px 20px;
+
+    text-align: center;
+  }
+
+  &__tasks {
+    flex: 1 1 100%;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+@media screen and (max-width: $desktop_min-width) {
+  .user {
+    &__data {
+      flex-basis: 140px;
+    }
+  }
+}
+@media screen and (max-width: $tablet_max-width) {
+  .user {
+    flex-direction: column;
+    &__data {
+      flex-basis: content;
+      place-content: baseline;
+    }
+  }
+}
+
+// @media screen and (max-width: $mobile_max-width) {
+//   .user {
+//     flex-direction: column;
+//     &__data {
+//       flex-basis: 100px;
+//     }
+//   }
+// }
