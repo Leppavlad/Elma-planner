@@ -14,6 +14,8 @@ export class Calendar {
   users: User[];
   tasks: Task[];
 
+  task_dragged: HTMLElement;
+
   constructor({
     usersDivId,
     backlogDivId,
@@ -107,6 +109,13 @@ export class Calendar {
     this[storage] = tempArray;
   };
 
+  private clearTasksSelectedClass() {
+    const tasks = document.querySelectorAll(".task");
+    for (let i = 0; i < tasks.length; i++) {
+      tasks[i].classList.remove("task_selected");
+    }
+  }
+
   private renderUsers() {
     this.usersContainer.innerHTML = "";
     this.users.forEach(({ data: { id, surname, firstName } }) => {
@@ -114,19 +123,69 @@ export class Calendar {
       userElement.classList.add("user");
       userElement.setAttribute("data-userId", id.toString());
 
-      let tasks = "";
-      for (let i = 0; i < this.daysToShow; i++) {
-        tasks += `<li class='task'></li>`;
-      }
+      const userData = document.createElement("div");
+      userData.classList.add("user__data");
+      userData.innerHTML = `${surname} ${firstName}`;
+      userElement.append(userData);
 
-      userElement.innerHTML = `
-        <div class="user__data">${surname} ${firstName}</div>
-        <ul class="user__tasks">
-          ${tasks}
-        </ul>`;
+      const userTasks = document.createElement("div");
+      userTasks.classList.add("user__tasks");
+      userElement.append(userTasks);
+
+      for (let i = 0; i < this.daysToShow; i++) {
+        const task = document.createElement("li");
+        task.classList.add("task");
+
+        task.addEventListener("dragover", (event: DragEvent) => {
+          event.preventDefault();
+
+          if (document.querySelector(".backlog__task_selected")) {
+            this.clearTasksSelectedClass();
+            const draggedElement = document.querySelector(
+              ".backlog__task_selected"
+            );
+
+            const draggedElementId = draggedElement.getAttribute("data-taskId");
+            const draggedTaskClassInstanceElement = this.tasks.find(
+              (element) => element.data.id === draggedElementId
+            );
+
+            const draggedElementData = {
+              subject: draggedTaskClassInstanceElement.data.subject,
+              duration:
+                (new Date(
+                  draggedTaskClassInstanceElement.data.planEndDate
+                ).getTime() -
+                  new Date(
+                    draggedTaskClassInstanceElement.data.planStartDate
+                  ).getTime()) /
+                8.64e7,
+            };
+
+            const draggedElementCopy = document.createElement("div");
+            draggedElementCopy.classList.add("task__element");
+            draggedElementCopy.setAttribute("data-taskId", draggedElementId);
+            draggedElementCopy.innerHTML = `
+              <div class="task__element__title">${draggedElementData.subject}</div>
+              <div class="task__element__duration">${draggedElementData.duration}<div/>
+              `;
+
+            const currentElement = event.target;
+            if ((currentElement as HTMLElement).classList.contains("task")) {
+              (currentElement as HTMLElement).classList.add("task_selected");
+              this.task_dragged = draggedElementCopy;
+            }
+          }
+        });
+
+        userTasks.append(task);
+      }
       this.usersContainer.append(userElement);
     });
   }
+
+  private bindTaskToExecutor(task) {}
+  private bindTasksToExecutors() {}
 
   private renderTasks() {
     this.backlogContainer.innerHTML = "";
@@ -159,14 +218,13 @@ export class Calendar {
           (<HTMLInputElement>e.target).classList.add("backlog__task_selected");
         });
         taskElement.addEventListener("dragend", (e) => {
-          (<HTMLInputElement>e.target).classList.remove(
-            "backlog__task_selected"
-          );
-        });
+          const target = <HTMLInputElement>e.target;
+          target.classList.remove("backlog__task_selected");
 
-        // taskElement.addEventListener("dragover", (e) => {
-        //   <HTMLInputElement>e.preventDefault()
-        // })
+          const calendarBlock = document.querySelector(".task_selected");
+          calendarBlock.append(this.task_dragged);
+          this.clearTasksSelectedClass();
+        });
 
         this.backlogContainer.append(taskElement);
       }
@@ -188,6 +246,7 @@ export class Calendar {
       "https://varankin_dev.elma365.ru/api/extensions/2a38760e-083a-4dd0-aebc-78b570bfd3c7/script/tasks"
     ).then((fetchedTasks: TaskType[]) => {
       this.createDataArray(fetchedTasks, Task, "tasks");
+      this.bindTasksToExecutors();
       this.renderTasks();
       this.removePreloader();
     });

@@ -7,8 +7,8 @@ new Calendar({
   backlogDivId: "backlogList",
 }).init();
 
-// new PerfectScrollbar(document.querySelector(".calendar__content"));
-// new PerfectScrollbar(document.querySelector(".backlog__list"));
+new PerfectScrollbar(document.querySelector(".calendar__content"));
+new PerfectScrollbar(document.querySelector(".backlog__list"));
 
 window.addEventListener("DOMContentLoaded", () => {
   function toggleBacklog() {

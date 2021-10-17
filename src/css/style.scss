@@ -21,8 +21,18 @@ body {
   height: calc(100vh - 0px);
   overflow: hidden;
   font-size: 1.8rem;
+  animation: glittering 0.5s ease 0.1s;
 
   @media screen and (max-width: $mobile_max-width) {
     font-size: 1.5rem;
+  }
+}
+
+@keyframes glittering {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
