@@ -1,7 +1,7 @@
 .task {
   display: block;
   min-width: 70px;
-  height: 100px;
+  min-height: 100px;
   border: 1px solid #eee;
 
   &_selected {
@@ -13,6 +13,16 @@
     border: 1px solid #48b;
     background-color: #59c;
     color: #fff;
+
+    &_green {
+      background-color: green;
+    }
+    &_orange {
+      background-color: orange;
+    }
+    &_red {
+      background-color: red;
+    }
 
     &__title {
       color: #fff;
