@@ -11,6 +11,18 @@
     padding: 10px 20px;
 
     text-align: center;
+
+    border: 1px solid #48b;
+    background-color: #59c;
+    color: #fff;
+
+    &_selected {
+      background-color: #48b;
+    }
+
+    @media screen and (min-width: $desktop_min-width) and (max-width: 1300px) {
+      flex-basis: 135px;
+    }
   }
 
   &__tasks {

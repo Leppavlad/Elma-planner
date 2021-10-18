@@ -7,11 +7,28 @@
   &_selected {
     border: 2px solid #aaa;
   }
+
+  &__element {
+    padding: 3px 5px;
+    border: 1px solid #48b;
+    background-color: #59c;
+    color: #fff;
+
+    &__title {
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    &__duration {
+      color: #fff;
+    }
+  }
 }
 
 @media screen and (max-width: $tablet_max-width) {
   .task {
     min-width: 50px;
-    height: 50px;
+    min-height: 50px;
+    height: fit-content;
   }
 }

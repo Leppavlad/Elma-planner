@@ -83,7 +83,7 @@ export class Calendar {
     );
 
     for (let i = 0; i < calendarDayBlocks.length; i++) {
-      calendarDayBlocks[i].setAttribute("data_day", this.daysVisible[i]);
+      calendarDayBlocks[i].setAttribute("data-day", this.daysVisible[i]);
 
       calendarDayBlocks[i].innerHTML = this.dateToDayMonth(this.daysVisible[i]);
     }
@@ -109,7 +109,13 @@ export class Calendar {
     this[storage] = tempArray;
   };
 
-  private clearTasksSelectedClass() {
+  private clearUsersSelectedClass() {
+    const users = document.querySelectorAll(".user__data");
+    for (let i = 0; i < users.length; i++) {
+      users[i].classList.remove("user__data_selected");
+    }
+  }
+  private clearCalendarTasksSelected() {
     const tasks = document.querySelectorAll(".task");
     for (let i = 0; i < tasks.length; i++) {
       tasks[i].classList.remove("task_selected");
@@ -126,62 +132,62 @@ export class Calendar {
       const userData = document.createElement("div");
       userData.classList.add("user__data");
       userData.innerHTML = `${surname} ${firstName}`;
+      this.bindUserDataDragover(userData);
       userElement.append(userData);
 
-      const userTasks = document.createElement("div");
-      userTasks.classList.add("user__tasks");
-      userElement.append(userTasks);
+      const userTasksList = document.createElement("ul");
+      userTasksList.classList.add("user__tasks");
+      userElement.append(userTasksList);
 
-      for (let i = 0; i < this.daysToShow; i++) {
-        const task = document.createElement("li");
-        task.classList.add("task");
-
-        task.addEventListener("dragover", (event: DragEvent) => {
-          event.preventDefault();
-
-          if (document.querySelector(".backlog__task_selected")) {
-            this.clearTasksSelectedClass();
-            const draggedElement = document.querySelector(
-              ".backlog__task_selected"
-            );
-
-            const draggedElementId = draggedElement.getAttribute("data-taskId");
-            const draggedTaskClassInstanceElement = this.tasks.find(
-              (element) => element.data.id === draggedElementId
-            );
-
-            const draggedElementData = {
-              subject: draggedTaskClassInstanceElement.data.subject,
-              duration:
-                (new Date(
-                  draggedTaskClassInstanceElement.data.planEndDate
-                ).getTime() -
-                  new Date(
-                    draggedTaskClassInstanceElement.data.planStartDate
-                  ).getTime()) /
-                8.64e7,
-            };
-
-            const draggedElementCopy = document.createElement("div");
-            draggedElementCopy.classList.add("task__element");
-            draggedElementCopy.setAttribute("data-taskId", draggedElementId);
-            draggedElementCopy.innerHTML = `
-              <div class="task__element__title">${draggedElementData.subject}</div>
-              <div class="task__element__duration">${draggedElementData.duration}<div/>
-              `;
-
-            const currentElement = event.target;
-            if ((currentElement as HTMLElement).classList.contains("task")) {
-              (currentElement as HTMLElement).classList.add("task_selected");
-              this.task_dragged = draggedElementCopy;
-            }
-          }
-        });
-
-        userTasks.append(task);
-      }
+      this.createUserTasks(userTasksList);
       this.usersContainer.append(userElement);
     });
+  }
+
+  bindUserDataDragover(userData) {
+    userData.addEventListener("dragover", (event: DragEvent) => {
+      const target = event.target as HTMLInputElement;
+      document
+        .querySelectorAll(".user__data_selected")
+        .forEach((element) => element.classList.remove("user__data_selected"));
+      target.classList.add("user__data_selected");
+    });
+  }
+  private createUserTasks(userTasksList) {
+    for (let i = 0; i < this.daysToShow; i++) {
+      const task = document.createElement("li");
+      task.classList.add("task");
+
+      task.addEventListener("dragover", (event: DragEvent) => {
+        event.preventDefault();
+
+        if (document.querySelector(".backlog__task_selected")) {
+          this.clearCalendarTasksSelected();
+          const draggedElement = document.querySelector(
+            ".backlog__task_selected"
+          );
+
+          const draggedElementId = draggedElement.getAttribute("data-taskId");
+          const calendarTask = this.createCalendarTaskElement(draggedElementId);
+
+          const currentElement = event.target as HTMLElement;
+          if (currentElement.classList.contains("task")) {
+            currentElement.classList.add("task_selected");
+            this.task_dragged = calendarTask;
+          } else if (currentElement.classList.contains("user__data")) {
+            currentElement.classList.add("user__data_selected");
+            this.task_dragged = calendarTask;
+          } else {
+            this.task_dragged = null;
+          }
+        }
+      });
+      task.addEventListener("dragleave", () => {
+        this.clearCalendarTasksSelected();
+      });
+
+      userTasksList.append(task);
+    }
   }
 
   private bindTaskToExecutor(task) {}
@@ -219,16 +225,75 @@ export class Calendar {
         });
         taskElement.addEventListener("dragend", (e) => {
           const target = <HTMLInputElement>e.target;
+
           target.classList.remove("backlog__task_selected");
 
-          const calendarBlock = document.querySelector(".task_selected");
-          calendarBlock.append(this.task_dragged);
-          this.clearTasksSelectedClass();
+          let destinataion =
+            document.querySelector(".task_selected") ||
+            document.querySelector(".user__data_selected");
+
+          if (destinataion.classList.contains("task_selected")) {
+            destinataion.append(this.task_dragged);
+          } else if (destinataion.classList.contains("user__data_selected")) {
+            const userId =
+              destinataion.parentElement.getAttribute("data-userId");
+
+            const taskId = this.task_dragged.getAttribute("data-taskId");
+            const task = this.tasks.find((task) => task.data.id === taskId);
+            const taskDateStart = task.data.planStartDate;
+
+            let calendarDayIndex: number;
+            const calendarDays = document.querySelectorAll(
+              ".calendar__header__day"
+            );
+
+            for (let i = 0; i < calendarDays.length; i++) {
+              if (calendarDays[i].getAttribute("data-day") === taskDateStart) {
+                calendarDayIndex = i;
+                continue;
+              }
+            }
+
+            const usersTaskList = document
+              .querySelector(`.user[data-userId="${userId}"`)
+              .querySelectorAll(".task");
+            usersTaskList[calendarDayIndex].append(this.task_dragged);
+          }
+          this.clearCalendarTasksSelected();
+          this.clearUsersSelectedClass();
         });
 
         this.backlogContainer.append(taskElement);
       }
     );
+  }
+
+  createCalendarTaskElement(taskOrTaskId: Task | string): HTMLElement {
+    const task =
+      taskOrTaskId instanceof Task
+        ? taskOrTaskId
+        : this.tasks.find((item) => item.data.id === taskOrTaskId);
+
+    const draggedElementData = {
+      subject: task.data.subject,
+      duration:
+        (new Date(task.data.planEndDate).getTime() -
+          new Date(task.data.planStartDate).getTime()) /
+        3600000,
+    };
+
+    const taskElement = document.createElement("div");
+    taskElement.classList.add("task__element");
+    taskElement.setAttribute("data-taskId", task.data.id);
+    taskElement.innerHTML = `
+      <div class="task__element__title">${draggedElementData.subject}</div>
+      <div class="task__element__duration">${
+        draggedElementData.duration <= 24
+          ? draggedElementData.duration + " часов"
+          : draggedElementData.duration / 24 + " дней"
+      }<div/>
+      `;
+    return taskElement;
   }
 
   async init() {

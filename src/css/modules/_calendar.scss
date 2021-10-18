@@ -12,6 +12,10 @@
     margin-left: 200px;
     border-bottom: 1px solid #ddd;
 
+    @media screen and (min-width: $desktop_min-width) and (max-width: 1300px) {
+      margin-left: 135px;
+    }
+
     &__day {
       height: 30px;
       display: grid;
