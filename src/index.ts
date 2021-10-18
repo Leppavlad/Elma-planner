@@ -5,6 +5,10 @@ import { Calendar } from "./js/Calendar";
 new Calendar({
   usersDivId: "usersList",
   backlogDivId: "backlogList",
+  controllers: {
+    prev: "week-prev",
+    next: "week-next",
+  },
 }).init();
 
 new PerfectScrollbar(document.querySelector(".calendar__content"));

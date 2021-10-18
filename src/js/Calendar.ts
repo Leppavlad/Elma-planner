@@ -15,19 +15,29 @@ export class Calendar {
   tasks: Task[];
 
   task_dragged: HTMLElement;
+  week_mode: number = 0;
 
   constructor({
     usersDivId,
     backlogDivId,
     daysToShow,
+    controllers,
   }: {
     usersDivId: string;
     backlogDivId: string;
     daysToShow?: DaysToShow;
+    controllers?: {
+      prev: string | HTMLElement;
+      next: string | HTMLElement;
+    };
   }) {
     this.usersContainer = document.getElementById(usersDivId);
     this.backlogContainer = document.getElementById(backlogDivId);
     this.setDaysToShow(daysToShow || 7);
+    if (controllers) {
+      this.setControllers(controllers);
+    }
+    this.mockApi();
     return this;
   }
 
@@ -61,20 +71,58 @@ export class Calendar {
     document.getElementById("calendar__preloader").remove();
   }
 
-  setCalendarDays() {
-    function transformDate(date: number) {
+  private transformDate(date: Date | number) {
+    if (date instanceof Date) {
+      return date.toISOString().split("T")[0];
+    } else {
       return new Date(date).toISOString().split("T")[0];
     }
+  }
 
-    const dayDuration = 8.64e7;
-    const todaysDate = new Date().getTime();
+  private setControllers({
+    prev,
+    next,
+  }: {
+    prev: string | HTMLElement;
+    next: string | HTMLElement;
+  }) {
+    if (prev instanceof HTMLElement) {
+      prev.addEventListener("click", () => {
+        this.week_mode--;
+        this.init();
+      });
+    } else {
+      const prevButton = document.getElementById(prev);
+      prevButton.addEventListener("click", () => {
+        this.week_mode--;
+        this.init();
+      });
+    }
+    if (next instanceof HTMLElement) {
+      next.addEventListener("click", () => {
+        this.week_mode++;
+        this.init();
+      });
+    } else {
+      const nextButton = document.getElementById(next);
+      nextButton.addEventListener("click", () => {
+        this.week_mode++;
+        this.init();
+      });
+    }
+  }
+
+  setCalendarDays() {
+    const dayDuration = 8.64e7,
+      weekDuration = dayDuration * 7;
+    const todaysDate = new Date().getTime() + this.week_mode * weekDuration;
     const todaysDay =
       new Date(todaysDate).getDay() === 0 ? 7 : new Date(todaysDate).getDay();
 
     const weekDays: string[] = [];
     for (let i = todaysDay - 1; weekDays.length < this.daysToShow; i--) {
       const day = todaysDate - i * dayDuration;
-      const dayToString = new Date(day).toISOString().split("T")[0];
+      const dayToString = this.transformDate(day);
       weekDays.push(dayToString);
     }
 
@@ -244,9 +292,9 @@ export class Calendar {
             ).getTime();
 
             const factStart = destinataion.getAttribute("data-day");
-            const factEnd = new Date(new Date(factStart).getTime() + duration)
-              .toISOString()
-              .split("T")[0];
+            const factEnd = this.transformDate(
+              new Date(factStart).getTime() + duration
+            );
 
             this.bindCalendarElement({
               element: this.task_dragged,
@@ -299,7 +347,7 @@ export class Calendar {
     const taskDays: string[] = [];
     for (let i = 0; i < duration; i++) {
       const time = new Date(dayStart).getTime() + i * 8.64e7;
-      const day = new Date(time).toISOString().split("T")[0];
+      const day = this.transformDate(time);
       taskDays.push(day);
     }
 
@@ -357,8 +405,7 @@ export class Calendar {
   }
 
   async init() {
-    this.mockApi();
-
+    this.setCalendarDays();
     fetchData(
       "https://varankin_dev.elma365.ru/api/extensions/2a38760e-083a-4dd0-aebc-78b570bfd3c7/script/users"
     ).then((fetchedUsers: UserType[]) => {
