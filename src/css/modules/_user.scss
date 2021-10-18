@@ -42,6 +42,7 @@
 @media screen and (max-width: $tablet_max-width) {
   .user {
     flex-direction: column;
+    min-width: 630px;
     &__data {
       flex-basis: content;
       place-content: baseline;

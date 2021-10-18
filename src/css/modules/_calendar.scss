@@ -1,22 +1,33 @@
 @import "../variables";
 
 .calendar {
-  width: inherit;
-  height: inherit;
+  position: relative;
+  width: 100%;
+  height: calc(100% - 60px);
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
   &__header {
     position: sticky;
+    z-index: 100;
     top: 0;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     margin-left: 200px;
     border-bottom: 1px solid #ddd;
+    background-color: #fff;
 
     @media screen and (min-width: $desktop_min-width) and (max-width: 1300px) {
       margin-left: 135px;
     }
 
     &__day {
+      min-width: 90px;
       height: 30px;
       display: grid;
       place-content: center;
@@ -26,14 +37,7 @@
   &__content {
     position: relative;
     width: 100%;
-    height: calc(100% - 92px);
-    overflow-y: auto;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    height: 100%;
   }
 
   &__title {
@@ -43,6 +47,7 @@
   }
   &__wrapper {
     margin-top: 60px;
+    width: 100%;
     height: calc(100vh - 0px);
     flex: 1 1 320px;
   }
@@ -78,6 +83,18 @@
   .calendar {
     &__header {
       margin-left: 0px;
+    }
+  }
+}
+
+@media screen and (max-width: $mobile_max-width) {
+  .calendar {
+    &__header {
+      min-width: 630px;
+      margin-left: 0px;
+    }
+    &__controller {
+      width: 45px;
     }
   }
 }

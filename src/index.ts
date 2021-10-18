@@ -11,7 +11,7 @@ new Calendar({
   },
 }).init();
 
-new PerfectScrollbar(document.querySelector(".calendar__content"));
+new PerfectScrollbar(document.querySelector(".calendar"));
 new PerfectScrollbar(document.querySelector(".backlog__list"));
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -23,7 +23,6 @@ window.addEventListener("DOMContentLoaded", () => {
       backlog.classList.remove("backlog__wrapper_hidden");
     }
   }
-
   toggleBacklog();
   window.addEventListener("resize", toggleBacklog);
 });

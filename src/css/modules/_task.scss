@@ -1,6 +1,6 @@
 .task {
   display: block;
-  min-width: 70px;
+  min-width: 90px;
   min-height: 100px;
   border: 1px solid #eee;
   overflow-wrap: break-word;
@@ -38,7 +38,6 @@
 
 @media screen and (max-width: $tablet_max-width) {
   .task {
-    min-width: 50px;
     min-height: 50px;
     height: fit-content;
   }
