@@ -79,18 +79,11 @@
     }
   }
 }
+
 @media screen and (max-width: $tablet_max-width) {
   .calendar {
     &__header {
-      margin-left: 0px;
-    }
-  }
-}
-
-@media screen and (max-width: $mobile_max-width) {
-  .calendar {
-    &__header {
-      min-width: 630px;
+      min-width: unquote($string: $tablet_max-width);
       margin-left: 0px;
     }
     &__controller {

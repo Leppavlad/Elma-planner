@@ -42,19 +42,11 @@
 @media screen and (max-width: $tablet_max-width) {
   .user {
     flex-direction: column;
-    min-width: 630px;
+    min-width: unquote($string: $tablet_max-width);
     &__data {
+      min-width: unquote($string: $tablet_max-width);
       flex-basis: content;
       place-content: baseline;
     }
   }
 }
-
-// @media screen and (max-width: $mobile_max-width) {
-//   .user {
-//     flex-direction: column;
-//     &__data {
-//       flex-basis: 100px;
-//     }
-//   }
-// }
